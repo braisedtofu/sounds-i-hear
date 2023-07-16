@@ -31,7 +31,6 @@ const textContent = [
 
 function App() {
   const floatTextRefs = useRef([]);
-  const [hoveredText, setHoveredText] = useState(null);
 
   useEffect(() => {
     const getRandomY = () => {
@@ -39,23 +38,23 @@ function App() {
       const elementHeight = floatTextRefs.current[0].offsetHeight;
       const minY = elementHeight; // Minimum y-position to avoid overlapping
       const maxY = viewportHeight - elementHeight; // Maximum y-position to avoid overlapping
-    
+
       let randomY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
-    
+
       floatTextRefs.current.forEach((element) => {
         const rect = element.getBoundingClientRect();
         const elementTop = rect.top;
         const elementBottom = rect.bottom;
-    
+
         if (randomY >= elementTop && randomY <= elementBottom) {
           // Random y-position overlaps with another element, adjust it
           randomY = elementBottom + (elementBottom - elementTop) + 1;
         }
       });
-    
+
       return randomY + 'px';
     };
-    
+
     const getRandomDuration = () => {
       const duration = 50;
       return duration + 's';
@@ -69,29 +68,17 @@ function App() {
       element.style.animationDuration = getRandomDuration();
     };
 
-    const restartAnimation = (element) => {
-      element.style.animation = 'none';
-      void element.offsetWidth; // Trigger reflow to restart the animation
-      element.style.animation = null;
-      updateRandomY(element);
-      updateRandomDuration(element);
-    };
+    const checkTextPosition = (element) => {
+      const rect = element.getBoundingClientRect();
+      const isOffScreen =
+        rect.bottom < 0 ||
+        rect.top > window.innerHeight ||
+        rect.right < 0 ||
+        rect.left > window.innerWidth;
 
-    const checkTextPosition = () => {
-      const floatTextWrappers = floatTextRefs.current;
-
-      floatTextWrappers.forEach((wrapper) => {
-        const rect = wrapper.getBoundingClientRect();
-        const isOffScreen =
-          rect.bottom < 0 ||
-          rect.top > window.innerHeight ||
-          rect.right < 0 ||
-          rect.left > window.innerWidth;
-
-        if (isOffScreen) {
-          wrapper.classList.remove('hovered');
-        }
-      });
+      if (isOffScreen) {
+        element.classList.remove('hovered');
+      }
     };
 
     const delayTextAppearance = (element, index) => {
@@ -129,61 +116,36 @@ function App() {
     };
   }, []);
 
-  const handleTextHover = (index) => {
-    const floatTextWrappers = floatTextRefs.current;
-    floatTextWrappers.forEach((wrapper, i) => {
-      if (i === index) {
-        wrapper.classList.add('hovered');
-      } else {
-        wrapper.classList.remove('hovered');
-      }
-    });
-    setHoveredText(index);
-  };
-
-  const handleTextLeave = () => {
-    const floatTextWrappers = floatTextRefs.current;
-    floatTextWrappers.forEach((wrapper) => {
-      wrapper.classList.remove('hovered');
-    });
-    setHoveredText(null);
-  };
-
   return (
     <div className="container">
       <div className="title">
-        <p1 className="title-text">sounds i hear</p1>
+        <p className="title-text">sounds i hear</p>
       </div>
       {textContent.map((text, index) => (
-        <div
-          key={index}
-          className="float-text-wrapper"
-          onMouseEnter={() => handleTextHover(index)}
-          onMouseLeave={handleTextLeave}
-        >
-          <p
-            ref={(ref) => (floatTextRefs.current[index] = ref)}
-            className={`float-text ${hoveredText === index ? 'hovered' : ''}`}
-          >
-            {text.split('\n').map((line, i) => (
-              <React.Fragment key={i}>
-                {line}
-                <br />
-              </React.Fragment>
-            ))}
-          </p>
-          {hoveredText === index && (
-            <div className="hovered-text">
-              <p className="hovered-text-content">
-                {text.split('\n').map((line, i) => (
-                  <React.Fragment key={i}>
-                    {line}
-                    <br />
-                  </React.Fragment>
-                ))}
-              </p>
-            </div>
-          )}
+        <div key={index} className="float-text-wrapper">
+          <div className="float-text-wrapper-inner">
+            <p
+              ref={(ref) => (floatTextRefs.current[index] = ref)}
+              className="float-text"
+            >
+              {text.split('\n').map((line, i) => (
+                <React.Fragment key={i}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </p>
+          </div>
+          <div className="hovered-text">
+            <p className="hovered-text-content">
+              {text.split('\n').map((line, i) => (
+                <React.Fragment key={i}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </p>
+          </div>
         </div>
       ))}
     </div>
