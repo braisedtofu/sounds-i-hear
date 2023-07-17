@@ -30,6 +30,7 @@
 
 .container {
   opacity: 0;
+  height: 100vh;
   animation: fadeIn 2s ease-in forwards;
 }
 
@@ -40,7 +41,7 @@
   text-align: center;
   animation: floatToLeft linear infinite;
   backface-visibility: hidden;
-  cursor: default;
+  cursor: pointer;
 }
 
 .float-text-wrapper .float-text {
@@ -48,10 +49,12 @@
 }
 
 .float-text-wrapper:hover .float-text {
+  
   animation: floatToLeft linear infinite, colorCycle 3s infinite;
 }
 
 .float-text-wrapper:hover .float-text-wrapper-inner {
+  opacity: 1;
   animation: colorCycle 3s infinite;
 }
 
@@ -72,7 +75,7 @@
   padding: 20px;
   border-radius: 8px;
   pointer-events: none;
-  width: 100vw;
+  width: 80vw;
   cursor: default;
   text-align: center;
 }
@@ -102,6 +105,9 @@
   transform: translate(-50%, -4%);
   cursor: default;
   padding: 3px;
+  animation-name: colorFade;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
 }
 
 .title-text{
@@ -116,8 +122,3 @@
   100% { color: #D72DC2; }
 }
 
-.title:hover {
-  animation-name: colorFade;
-  animation-duration: 3s;
-  animation-iteration-count: infinite;
-}
