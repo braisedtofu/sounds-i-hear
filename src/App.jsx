@@ -2,7 +2,7 @@ import './App.css'
 import React, { useEffect } from 'react';
 import { useRef } from 'react';
 
-
+// Array containing text content and associated links
 const textContent = [
   {
     text: 'between the gaps, i was swimming laps\ngot close to some epiphany\ni\'ll convince a friend to join deep ends\nhave your toes touch the lack of cement',
@@ -100,32 +100,39 @@ const textContent = [
 
 
 function App() {
+  // Create a ref to hold references to the floating text elements
   const floatTextRefs = useRef([]);
 
-const yPositions = [
-  '325px', '175px', '500px', '400px', '275px', '100px', '600px', '225px',
-  '50px', '525px', '375px', '875px', '350px', '200px', '125px', '250px',
-  '575px', '650px', '300px', '450px', '525px', '475px', '175px', '425px'
-];
-      const handleFloatTextClick = (index) => {
+  // Array of Y positions for the floating texts
+  const yPositions = [
+    '325px', '175px', '500px', '400px', '275px', '100px', '600px', '225px',
+    '50px', '525px', '375px', '875px', '350px', '200px', '125px', '250px',
+    '575px', '650px', '300px', '450px', '525px', '475px', '175px', '425px'
+  ];
+    
+  // Function to handle clicking on a floating text
+  const handleFloatTextClick = (index) => {
     const link = textContent[index].link;
     window.open(link, '_blank');
   };
 
-  useEffect(() => {
+    useEffect(() => {
     const updateYPosition = (element, index) => {
       element.style.setProperty('--random-y', yPositions[index]);
     };
 
+    // Function to generate a random animation duration
     const getRandomDuration = () => {
       const duration = 20;
       return duration + 's';
     };
 
+    // Function to update animation duration of a floating text element
     const updateRandomDuration = (element) => {
       element.style.animationDuration = getRandomDuration();
     };
 
+    // Function to check if a floating text element is off-screen
     const checkTextPosition = (element) => {
       const rect = element.getBoundingClientRect();
       const isOffScreen =
@@ -139,17 +146,21 @@ const yPositions = [
       }
     };
 
+      // Function to delay the appearance of a floating text
     const delayTextAppearance = (element, index) => {
       const delay = index * 2500; // Adjust the delay duration as needed
       element.style.animationDelay = delay + 'ms';
       element.style.opacity = 0;
     };
 
+        // Set up the initial animation and interactions
+
     const setupTimeout = setTimeout(() => {
       floatTextRefs.current.forEach((element, index) => {
         updateYPosition(element, index); // Assign specific Y position
         updateRandomDuration(element);
 
+        // Add animation iteration event listener
         const animationIterationHandler = () => {
           updateYPosition(element, index); // Update Y position on animation iteration
           checkTextPosition(element);
@@ -157,6 +168,7 @@ const yPositions = [
 
         element.addEventListener('animationiteration', animationIterationHandler);
 
+          // Delay text appearance based on index
         delayTextAppearance(element, floatTextRefs.current.length - 1 - index);
 
         return () => {
@@ -165,6 +177,7 @@ const yPositions = [
       });
     }, 0);
 
+    // Clean up when component is unmounted
     return () => {
       clearTimeout(setupTimeout);
       floatTextRefs.current.forEach((element) =>
