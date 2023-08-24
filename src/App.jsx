@@ -102,41 +102,24 @@ const textContent = [
 function App() {
   const floatTextRefs = useRef([]);
 
-  const handleFloatTextClick = (index) => {
+const yPositions = [
+  '325px', '175px', '500px', '400px', '275px', '100px', '600px', '225px',
+  '50px', '525px', '375px', '875px', '350px', '200px', '125px', '250px',
+  '575px', '650px', '300px', '450px', '525px', '475px', '175px', '425px'
+];
+      const handleFloatTextClick = (index) => {
     const link = textContent[index].link;
     window.open(link, '_blank');
   };
 
   useEffect(() => {
-    const getRandomY = () => {
-      const viewportHeight = window.innerHeight;
-      const elementHeight = floatTextRefs.current[0].offsetHeight;
-      const minY = elementHeight; // Minimum y-position to avoid overlapping
-      const maxY = viewportHeight - elementHeight; // Maximum y-position to avoid overlapping
-
-      let randomY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
-
-      floatTextRefs.current.forEach((element) => {
-        const rect = element.getBoundingClientRect();
-        const elementTop = rect.top;
-        const elementBottom = rect.bottom;
-
-        if (randomY >= elementTop && randomY <= elementBottom) {
-          // Random y-position overlaps with another element, adjust it
-          randomY = elementBottom + (elementBottom - elementTop) + 1;
-        }
-      });
-
-      return randomY + 'px';
+    const updateYPosition = (element, index) => {
+      element.style.setProperty('--random-y', yPositions[index]);
     };
 
     const getRandomDuration = () => {
-      const duration = 30;
+      const duration = 20;
       return duration + 's';
-    };
-
-    const updateRandomY = (element) => {
-      element.style.setProperty('--random-y', getRandomY());
     };
 
     const updateRandomDuration = (element) => {
@@ -157,29 +140,30 @@ function App() {
     };
 
     const delayTextAppearance = (element, index) => {
-      const delay = index * 4000; // Adjust the delay duration as needed
+      const delay = index * 2500; // Adjust the delay duration as needed
       element.style.animationDelay = delay + 'ms';
       element.style.opacity = 0;
     };
 
-    const randomizeYPosition = (element) => {
-      updateRandomY(element);
-      updateRandomDuration(element);
-    };
-
     const setupTimeout = setTimeout(() => {
       floatTextRefs.current.forEach((element, index) => {
-        updateRandomY(element);
+        updateYPosition(element, index); // Assign specific Y position
         updateRandomDuration(element);
 
-        element.addEventListener('animationiteration', () => {
-          randomizeYPosition(element);
+        const animationIterationHandler = () => {
+          updateYPosition(element, index); // Update Y position on animation iteration
           checkTextPosition(element);
-        });
+        };
+
+        element.addEventListener('animationiteration', animationIterationHandler);
 
         delayTextAppearance(element, floatTextRefs.current.length - 1 - index);
+
+        return () => {
+          element.removeEventListener('animationiteration', animationIterationHandler);
+        };
       });
-    }, 100);
+    }, 0);
 
     return () => {
       clearTimeout(setupTimeout);
@@ -190,7 +174,7 @@ function App() {
       );
     };
   }, []);
-  
+
   return (
     <div className="container">
       <div className="title">

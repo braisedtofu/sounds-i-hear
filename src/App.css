@@ -1,11 +1,16 @@
 @-webkit-keyframes floatToLeft {
   0% {
     -webkit-transform: translateX(100vw) translateY(var(--random-y));
+    -moz-transform: translateX(100vw) translateY(var(--random-y));
     opacity: 1;
+    -webkit-animation-delay: 0.5s;  
+
   }
 
   100% {
     -webkit-transform: translateX(calc(-100%)) translateY(var(--random-y));
+    -moz-transform: translateX(-100) translateY(var(--random-y));
+    -webkit-animation-delay: 0.5s;
     opacity: 0;
   }
 }
@@ -39,23 +44,39 @@
   opacity: 0;
   position: absolute;
   text-align: center;
-  animation: floatToLeft linear 0.01s infinite;
+  -webkit-animation-name: floatToLeft;
+  -webkit-animation-timing-function: linear 0;
+  -webkit-animation-delay: 0.5s;
+  -webkit-animation-iteration-count: infinite; 
   backface-visibility: hidden;
   cursor: pointer;
 }
 
 .float-text-wrapper .float-text {
-  animation: floatToLeft linear 0.01s infinite;
+  -webkit-animation-name: floatToLeft linear 0.5s infinite;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-delay: 0.5s;
+    -webkit-animation-iteration-count: infinite;
 }
 
 .float-text-wrapper:hover .float-text {
-  
-  animation: floatToLeft linear 0.01s infinite, colorCycle 3s infinite;
+
+  -webkit-animation-name: floatToLeft, colorCycle;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-duration: 0s, 3s;
+  -webkit-animation-delay: 0.5s, 0.1s;
+  -webkit-animation-iteration-count: infinite, infinite; 
+
 }
 
 .float-text-wrapper:hover .float-text-wrapper-inner {
   opacity: 1;
-  animation: colorCycle 3s linear 0.01s infinite;
+  -webkit-animation-name: colorCycle;
+  -webkit-animation-duration: 3s;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-delay: 0.01s;
+  -webkit-animation-iteration-count: infinite;
+
 }
 
 
@@ -68,7 +89,7 @@
 }
 
 .hovered-text {
-  position: fixed;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
